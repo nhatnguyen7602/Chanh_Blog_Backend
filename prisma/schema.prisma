@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bai_viet {
+  id            Int         @id @default(autoincrement())
+  tieu_de       String?     @db.VarChar(255)
+  hinh_anh      String?     @db.VarChar(255)
+  noi_dung      String?
+  ngay          DateTime?   @db.Timestamp(6)
+  nguoi_viet_id Int?
+  nguoi_dung    nguoi_dung? @relation(fields: [nguoi_viet_id], references: [id], onDelete: Cascade)
+  binh_luan     binh_luan[]
+  luu           luu[]
+  thich         thich[]
+}
+
+model binh_luan {
+  id              Int         @id @default(autoincrement())
+  ma_bai_viet     Int?
+  ma_nguoi_dung   Int?
+  ngay_binh_luan  DateTime?   @db.Timestamp(6)
+  noi_dung        String?     @db.VarChar(255)
+  id_cha          Int?
+  tag_user_name   String?     @db.VarChar(255)
+  binh_luan       binh_luan?  @relation("binh_luanTobinh_luan", fields: [id_cha], references: [id], onDelete: Cascade)
+  other_binh_luan binh_luan[] @relation("binh_luanTobinh_luan")
+  bai_viet        bai_viet?   @relation(fields: [ma_bai_viet], references: [id], onDelete: Cascade)
+  nguoi_dung      nguoi_dung? @relation(fields: [ma_nguoi_dung], references: [id], onDelete: Cascade)
+}
+
+model luu {
+  id            Int         @id @default(autoincrement())
+  ma_bai_viet   Int?
+  ma_nguoi_dung Int?
+  bai_viet      bai_viet?   @relation(fields: [ma_bai_viet], references: [id], onDelete: Cascade)
+  nguoi_dung    nguoi_dung? @relation(fields: [ma_nguoi_dung], references: [id], onDelete: Cascade)
+}
+
+model nguoi_dung {
+  id        Int         @id @default(autoincrement())
+  nick_name String?     @db.VarChar(255)
+  email     String?     @db.VarChar(255)
+  pass_word String?     @db.VarChar(255)
+  avatar    String?     @db.VarChar(255)
+  quyen     String?     @db.VarChar(255)
+  bai_viet  bai_viet[]
+  binh_luan binh_luan[]
+  luu       luu[]
+  thich     thich[]
+}
+
+model thich {
+  id            Int         @id @default(autoincrement())
+  ma_bai_viet   Int?
+  ma_nguoi_dung Int?
+  ngay_thich    DateTime?   @db.Timestamp(6)
+  bai_viet      bai_viet?   @relation(fields: [ma_bai_viet], references: [id], onDelete: Cascade)
+  nguoi_dung    nguoi_dung? @relation(fields: [ma_nguoi_dung], references: [id], onDelete: Cascade)
+}
